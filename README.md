@@ -2,7 +2,25 @@
 
 Extract structure from flat files
 
-Example usage:
+(Note: The test data is bogus. https://support.spatialkey.com/spatialkey-sample-csv-data/)
+
+Example usage - extract metadata as DDL:
+
+    String datasetName = "sales";
+    String sampleFilePath = "/Users/mark/src/fileservices/src/test/resources/SalesJan2009.csv";
+    String data = FileServiceImpl.readFileAsString(new File(sampleFilePath));
+    DatasetInfo info = svc.extractMetadata(datasetName, data);
+    System.out.println(info.toDDL());
+
+
+Example usage - extract metadata as DDL from command line:
+
+    cd <fileservices_root_dir>
+    ./gradlew clean build
+    java -cp build/libs/fileservices-1.0.jar io.metamorphic.FileUtil sales ~/src/fileservices/src/test/resources/SalesJan2009.csv
+
+
+Example usage - determine file characteristics:
 
     FileService fs = new FileServiceImpl();
 
@@ -65,3 +83,37 @@ Assumes use of Artifactory, so Artifactory host and user variables must be set i
 * Jackson
 * commons-lang
 * commons-logging
+
+
+## Setting up IntelliJ
+
+1. Enable the Gradle plugin and import the project
+2. Right-click the `fileservices` module, select "Open Module Settings" from the context menu,
+   click on the plus sign above the left-hand module list to add a module, select "Import Module",
+   select the root of the _metamorphic-commons_ project, keep the default settings in the setup 
+   wizard, give it the name "io.metamorphic.commons".
+3. Right-click the `fileservices` module again. This time, select the "main" sub-module, click on 
+   the "Dependencies" tab, click on the plus sign at the bottom, select "3 Module Dependency...", 
+   then select the commons module added above.
+
+
+## Setting up Gradle
+
+### Setup Artifactory
+
+1. Download Artifactory from [JFrog website](https://jfrog.com/open-source/). Unzip to a directory.
+2. Change to the Artifactory directory, and run `bin/artifactory.sh`
+3. Open the [Artifactory Console](http://localhost:8081/artifactory). It will start with a wizard
+   to setup. On one of the setup pages, choose Maven as a repository to setup.
+   
+### Setup Artifactory Gradle Plugin
+
+1. Add the following properties to `~/.gradle/gradle.properties`:
+
+    artifactory_user=admin
+    artifactory_password=<password>  # the password you created in the Artifactory setup
+    artifactory_url=http://localhost:8081/artifactory
+    org.gradle.caching=true
+    gradle.cache.push=false
+    artifactory_contextUrl=http://localhost:8081/artifactory
+    artifactory_pluginsUrl=http://localhost:8081/artifactory/jcenter

@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/fileservices.iml" filepath="$PROJECT_DIR$/fileservices.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.metamorphic.fileservices.iml" filepath="$PROJECT_DIR$/.idea/modules/io.metamorphic.fileservices.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.metamorphic.fileservices.main.iml" filepath="$PROJECT_DIR$/.idea/modules/io.metamorphic.fileservices.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.metamorphic.fileservices.test.iml" filepath="$PROJECT_DIR$/.idea/modules/io.metamorphic.fileservices.test.iml" />
     </modules>
   </component>
 </project>

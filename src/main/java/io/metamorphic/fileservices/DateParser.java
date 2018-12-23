@@ -1,5 +1,8 @@
 package io.metamorphic.fileservices;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +15,8 @@ import java.util.List;
  * Created by markmo on 4/07/2015.
  */
 public class DateParser implements ITypeParser<ParsedDate> {
+
+    private static final Logger log = LogManager.getLogger(DateParser.class);
 
     // Overwritten by 'date-formats' setting if provided
     private static String[] dateFormats = new String[] {
@@ -84,6 +89,8 @@ public class DateParser implements ITypeParser<ParsedDate> {
 
             } catch (ParseException e) {
                 // ignore
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid format: '" + format + "'; " + e.getMessage(), e);
             }
             i += 1;
         }

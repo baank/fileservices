@@ -24,8 +24,8 @@ apply plugin: 'com.jfrog.artifactory'
 group 'io.metamorphic'
 version '1.0'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 publishing {
     publications {
@@ -43,6 +43,12 @@ configurations {
 jar {
     baseName = 'fileservices'
     version = '1.0'
+    manifest {
+        attributes "Main-Class": "io.metamorphic.FileUtil"
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 artifactory {
@@ -70,10 +76,14 @@ artifactory {
 
 dependencies {
     compile 'io.metamorphic:metamorphic-commons:1.0'
-    //compile 'io.metamorphic:analysis-commons:1.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.4.6'
+    compile 'com.github.javafaker:javafaker:0.12'
+    compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'commons-logging:commons-logging:1.2'
+    compile 'org.apache.logging.log4j:log4j-api:2.11.1'
+    compile 'org.apache.logging.log4j:log4j-core:2.11.1'
+    compile files('libs/opencsv-2.4-SNAPSHOT.jar')
+    compile files('libs/ddl-parser-1.0-SNAPSHOT.jar')
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 

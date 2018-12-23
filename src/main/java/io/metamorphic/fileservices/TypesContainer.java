@@ -7,9 +7,11 @@ public class TypesContainer {
 
     public TypeInfo[] types;
     public DataTypes[] sqlTypes;
+    public int[] lengths;
 
-    public TypesContainer(TypeInfo[] types, DataTypes[] sqlTypes) {
+    public TypesContainer(TypeInfo[] types, DataTypes[] sqlTypes, int[] lengths) {
         this.types = types;
         this.sqlTypes = sqlTypes;
+        this.lengths = lengths;
     }
 }

@@ -1,5 +1,8 @@
 package io.metamorphic.fileservices;
 
+import io.metamorphic.models.DatasetInfo;
+
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -13,7 +16,11 @@ public interface FileService {
 
     TypeInfo deduceDataType(String value);
 
+    DatasetInfo extractMetadata(String datasetName, String data) throws ExtractionException, IOException;
+
     FileParameters findMultiCharSequences(String data, String lineEnding);
+
+    void generateDataFromDDL(String ddl, int numRows) throws IOException;
 
     FileParameters guessDelimiter(String data, String lineEnding);
 

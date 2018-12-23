@@ -1,6 +1,6 @@
 package io.metamorphic.fileservices;
 
-import io.metamorphic.analysiscommons.models.DatasetInfo;
+import io.metamorphic.models.DatasetInfo;
 
 /**
  * Created by markmo on 1/09/2015.
