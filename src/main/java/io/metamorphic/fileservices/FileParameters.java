@@ -1,5 +1,7 @@
 package io.metamorphic.fileservices;
 
+import java.util.Map;
+
 /**
  *
  * lineTerminator specifies the character sequence which should
@@ -53,6 +55,9 @@ public class FileParameters {
     private String lineTerminator;
     private QUOTING quoting;
     private Character escapeCharacter;
+    private String firstDateFormat;
+    private String firstDateTimeFormat;
+    private Map<String, String> srcFormats;
 
     public FileParameters() {
         this.textQualifier = "\"";
@@ -147,5 +152,29 @@ public class FileParameters {
 
     public void setEscapeCharacter(Character escapeCharacter) {
         this.escapeCharacter = escapeCharacter;
+    }
+
+    public String getFirstDateFormat() {
+        return firstDateFormat;
+    }
+
+    public void setFirstDateFormat(String firstDateFormat) {
+        this.firstDateFormat = firstDateFormat;
+    }
+
+    public String getFirstDateTimeFormat() {
+        return firstDateTimeFormat;
+    }
+
+    public void setFirstDateTimeFormat(String firstDateTimeFormat) {
+        this.firstDateTimeFormat = firstDateTimeFormat;
+    }
+
+    public Map<String, String> getSrcFormats() {
+        return srcFormats;
+    }
+
+    public void setSrcFormats(Map<String, String> srcFormats) {
+        this.srcFormats = srcFormats;
     }
 }

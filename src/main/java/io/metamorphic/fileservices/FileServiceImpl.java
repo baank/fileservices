@@ -115,7 +115,8 @@ public class FileServiceImpl implements FileService {
         return new TypeInfo(ValueTypes.STRING);
     }
 
-    public DatasetInfo extractMetadata(String datasetName, String data) throws ExtractionException, IOException {
+    public DatasetInfo extractMetadata(String dataSourceName, String datasetName, String data)
+            throws ExtractionException, IOException {
         if (log.isDebugEnabled()) {
             log.debug("Extracting metadata");
         }
@@ -179,9 +180,15 @@ public class FileServiceImpl implements FileService {
         DataTypes[] sqlTypes = tc.sqlTypes;
         int[] lengths = tc.lengths;
 
+        Pair<String, String> dateFormats = getFirstDateFormat(tc);
+        fileParameters.setFirstDateFormat(dateFormats.l);
+        fileParameters.setFirstDateTimeFormat(dateFormats.r);
+
         String[] header = getHeader(rows, types, hasHeader);
 
         DatasetInfo datasetInfo = new DatasetInfo();
+        datasetInfo.setSsuDesignation("nonsp");
+        datasetInfo.setDataSourceName(dataSourceName);
         datasetInfo.setName(datasetName);
         datasetInfo.setFileType(FileType.DELIMITED.toString());
         List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
@@ -190,9 +197,46 @@ public class FileServiceImpl implements FileService {
                     sqlTypes[i].toString(), lengths[i]));
         }
         datasetInfo.setColumns(columns);
+        fileParameters.setSrcFormats(getSrcFormats(columns, tc));
         datasetInfo.setFileParameters(fileParameters);
 
         return datasetInfo;
+    }
+
+    private Map<String, String> getSrcFormats(List<ColumnInfo> columns, TypesContainer tc) {
+        Map<String, String> srcFormats = new HashMap<>();
+        for (int i = 0; i < columns.size(); i++) {
+            ColumnInfo c = columns.get(i);
+            TypeInfo t = tc.types[i];
+            if (ValueTypes.DATE.equals(t.getType())) {
+                if (t.getInfo().containsKey("format")) {
+                    String format = (String)t.getInfo().get("format");
+                    srcFormats.put(c.getName(), format);
+                }
+            }
+        }
+        return srcFormats;
+    }
+
+    private Pair<String, String> getFirstDateFormat(TypesContainer tc) {
+        String dateFormat = null;
+        String dateTimeFormat = null;
+        for (TypeInfo t : tc.types) {
+            if (ValueTypes.DATE.equals(t.getType())) {
+                if (t.getInfo().containsKey("format")) {
+                    String format = (String)t.getInfo().get("format");
+                    if (dateTimeFormat == null && format.contains("HH")) {
+                        dateTimeFormat = format;
+                    } else if (dateFormat == null) {
+                        dateFormat = format;
+                    }
+                    if (dateFormat != null && dateTimeFormat != null) {
+                        break;
+                    }
+                }
+            }
+        }
+        return new Pair<>(dateFormat, dateTimeFormat);
     }
 
     /**
@@ -360,13 +404,14 @@ public class FileServiceImpl implements FileService {
         return new FileParameters(delim, skipInitialSpace);
     }
 
-    private static String[] INT_TYPES = {"TINYINT", "SMALLINT", "MEDIUMINT", "INTEGER", "INT", "BIGINT"};
-    private static String[] FLOAT_TYPES = {"REAL", "DOUBLE", "FLOAT", "DECIMAL", "NUMERIC"};
-    private static String[] FIRST_NAMES = {"first_name", "firstname", "given_name", "given_names"};
-    private static String[] LAST_NAMES = {"last_name", "lastname", "surname", "family_name"};
-    private static String[] FULL_NAMES = {"name", "full_name", "fullname"};
-    private static String[] DATE_TYPES = {"DATE", "DATETIME"};
-    private static String[] IP_ADDRESS = {"ip_address", "ip_addr", "ip", "ipv4", "ipv6"};
+    public static String[] STRING_TYPES = {"STRING", "VARCHAR", "NVARCHAR", "TEXT"};
+    public static String[] INT_TYPES = {"TINYINT", "SMALLINT", "MEDIUMINT", "INTEGER", "INT", "BIGINT"};
+    public static String[] FLOAT_TYPES = {"REAL", "DOUBLE", "FLOAT", "DECIMAL", "NUMERIC"};
+    public static String[] FIRST_NAMES = {"first_name", "firstname", "given_name", "given_names"};
+    public static String[] LAST_NAMES = {"last_name", "lastname", "surname", "family_name"};
+    public static String[] FULL_NAMES = {"name", "full_name", "fullname"};
+    public static String[] DATE_TYPES = {"DATE", "DATETIME"};
+    public static String[] IP_ADDRESS = {"ip_address", "ip_addr", "ip", "ipv4", "ipv6"};
 
     public void generateDataFromDDL(String ddl, int numRows) throws IOException {
         Faker faker = new Faker();

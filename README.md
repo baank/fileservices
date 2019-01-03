@@ -6,18 +6,50 @@ Extract structure from flat files
 
 Example usage - extract metadata as DDL:
 
+    String dataSourceName = "test";
     String datasetName = "sales";
     String sampleFilePath = "/Users/mark/src/fileservices/src/test/resources/SalesJan2009.csv";
     String data = FileServiceImpl.readFileAsString(new File(sampleFilePath));
-    DatasetInfo info = svc.extractMetadata(datasetName, data);
+    DatasetInfo info = svc.extractMetadata(dataSourceName, datasetName, data);
+    
+    // output DDL file to stdout
     System.out.println(info.toDDL());
+
+ 
+Example usage (continued) - extract configuration properties files:
+    
+    Properties props = new Properties();
+    // common platform properties
+    InputStream propsFile = FileUtil.class.getResourceAsStream("/.env");
+    props.load(propsFile);
+    
+    // output ingestion properties file to stdout
+    System.out.println(info.toIngestionProperties(props));
+    
+    // output curation properties file to stdout
+    System.out.println(info.toCurationProperties(props));
+    
+    // output file parsing properties file to stdout
+    System.out.println(info.toFileProperties());
 
 
 Example usage - extract metadata as DDL from command line:
 
     cd <fileservices_root_dir>
     ./gradlew clean build
-    java -cp build/libs/fileservices-1.0.jar io.metamorphic.FileUtil sales ~/src/fileservices/src/test/resources/SalesJan2009.csv
+    java -cp build/libs/fileservices-1.0.jar io.metamorphic.FileUtil test sales ~/src/fileservices/src/test/resources/SalesJan2009.csv curate
+    
+Arguments:
+
+1. datasource name (no spaces, illegal chars)
+2. dataset name (no spaces, illegal chars)
+3. sample file path
+4. output: one of ["ingest", "curate", "file", "DDL"] (case insensitive)
+
+Note: an environment properties file is required on the classloader path,
+containing common platform properties for inclusion in output files.
+See 'src/main/resources/template.env' for an example. The file must be
+renamed to '.env'.
 
 
 Example usage - determine file characteristics:

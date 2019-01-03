@@ -16,7 +16,8 @@ public interface FileService {
 
     TypeInfo deduceDataType(String value);
 
-    DatasetInfo extractMetadata(String datasetName, String data) throws ExtractionException, IOException;
+    DatasetInfo extractMetadata(String dataSourceName, String datasetName, String data)
+            throws ExtractionException, IOException;
 
     FileParameters findMultiCharSequences(String data, String lineEnding);
 

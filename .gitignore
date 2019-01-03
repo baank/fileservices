@@ -188,3 +188,4 @@ RUNNING_PID
 *.rpm
 id_rsa
 id_rsa.*
+.env
