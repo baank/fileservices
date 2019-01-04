@@ -189,3 +189,5 @@ RUNNING_PID
 id_rsa
 id_rsa.*
 .env
+
+!libs/*.jar
